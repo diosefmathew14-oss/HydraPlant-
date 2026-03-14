@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>HydraPlant - Smart Plant Monitoring</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+background:#f4faf6;
+color:#333;
+scroll-behavior:smooth;
+transition:0.4s;
+}
+
+.dark{
+background:#111;
+color:white;
+}
+
+nav{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:18px 50px;
+background:#2e7d32;
+color:white;
+position:sticky;
+top:0;
+z-index:1000;
+}
+
+.logo{
+display:flex;
+align-items:center;
+gap:12px;
+}
+
+.logo img{
+width:45px;
+height:45px;
+object-fit:contain;
+}
+
+.logo h2{
+font-size:1.5rem;
+color:white;
+}
+
+nav ul{
+display:flex;
+gap:25px;
+list-style:none;
+}
+
+nav a{
+color:white;
+text-decoration:none;
+font-weight:500;
+}
+
+.hero{
+height:90vh;
+
+background:
+linear-gradient(rgba(0,0,0,0.45),rgba(0,0,0,0.45)),
+url("hydra-logo.jpg");
+
+background-size:cover;
+background-position:center;
+
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+text-align:center;
+
+color:white;
+padding:20px;
+}
+
+.hero h1{
+font-size:3.4rem;
+margin-bottom:20px;
+}
+
+.hero p{
+max-width:850px;
+font-size:1.2rem;
+opacity:0.9;
+}
+
+button.main{
+margin-top:25px;
+padding:14px 25px;
+font-size:16px;
+border:none;
+background:white;
+color:#2e7d32;
+border-radius:10px;
+cursor:pointer;
+}
+
+.container{
+max-width:1200px;
+margin:auto;
+padding:80px 20px;
+}
+
+.title{
+text-align:center;
+font-size:2.3rem;
+margin-bottom:50px;
+color:#2e7d32;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:30px;
+}
+
+.card{
+background:white;
+padding:30px;
+border-radius:15px;
+box-shadow:0 12px 30px rgba(0,0,0,0.08);
+transition:0.4s;
+}
+
+.card:hover{
+transform:translateY(-10px);
+}
+
+.dark .card{
+background:#1e1e1e;
+}
+
+.dashboard{
+display:flex;
+flex-wrap:wrap;
+gap:40px;
+justify-content:center;
+}
+
+.gauge{
+width:170px;
+height:170px;
+border-radius:50%;
+border:15px solid #e8f5e9;
+position:relative;
+overflow:hidden;
+}
+
+.fill{
+position:absolute;
+bottom:0;
+width:100%;
+background:#4CAF50;
+height:50%;
+transition:0.5s;
+}
+
+.value{
+position:absolute;
+width:100%;
+top:50%;
+transform:translateY(-50%);
+text-align:center;
+font-size:1.6rem;
+font-weight:600;
+}
+
+.chart{
+max-width:700px;
+margin:auto;
+}
+
+.architecture{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:30px;
+text-align:center;
+}
+
+.architecture div{
+padding:25px;
+border-radius:12px;
+background:white;
+box-shadow:0 8px 20px rgba(0,0,0,0.08);
+}
+
+.dark .architecture div{
+background:#1e1e1e;
+}
+
+.gallery{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:20px;
+}
+
+.gallery img{
+width:100%;
+border-radius:12px;
+box-shadow:0 10px 25px rgba(0,0,0,0.2);
+}
+
+.notification{
+position:fixed;
+top:20px;
+right:20px;
+background:#ff7043;
+color:white;
+padding:15px 25px;
+border-radius:10px;
+display:none;
+box-shadow:0 6px 15px rgba(0,0,0,0.2);
+}
+
+footer{
+background:#1b5e20;
+color:white;
+text-align:center;
+padding:40px;
+margin-top:50px;
+}
+
+/* MOBILE FIX */
+
+@media (max-width:768px){
+
+nav{
+flex-direction:column;
+align-items:flex-start;
+padding:15px 20px;
+}
+
+nav ul{
+flex-direction:column;
+width:100%;
+gap:12px;
+margin-top:10px;
+}
+
+.hero{
+height:auto;
+padding:70px 20px;
+}
+
+.hero h1{
+font-size:2.2rem;
+}
+
+.hero p{
+font-size:1rem;
+}
+
+.dashboard{
+flex-direction:column;
+align-items:center;
+}
+
+.grid{
+grid-template-columns:1fr;
+}
+
+.architecture{
+grid-template-columns:1fr;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<nav>
+
+<div class="logo">
+
+
+<h2>HydraPlant</h2>
+
+</div>
+
+<ul>
+
+<li><a href="#about">About</a></li>
+<li><a href="#features">Features</a></li>
+<li><a href="#dashboard">Dashboard</a></li>
+<li><a href="#system">System</a></li>
+<li><a href="#prototype">Prototype</a></li>
+
+</ul>
+
+<button onclick="toggleMode()">🌙</button>
+
+</nav>
+
+<section class="hero">
+
+<h1>Smart Plant Monitoring System</h1>
+
+<p>
+
+Hydra Plant is an IoT-based system designed to monitor soil moisture,
+temperature, and humidity in real time. Instead of automating watering,
+it helps users preserve the tradition of caring for plants while
+receiving smart alerts and monitoring data.
+
+</p>
+
+<button class="main" onclick="scrollToDashboard()">View Dashboard</button>
+
+</section>
+
+<section class="container" id="features">
+
+<h2 class="title">Key Features</h2>
+
+<div class="grid">
+
+<div class="card">
+<h3>Real-Time Monitoring</h3>
+<p>Track soil moisture continuously.</p>
+</div>
+
+<div class="card">
+<h3>Temperature Monitoring</h3>
+<p>DHT sensor measures plant environment.</p>
+</div>
+
+<div class="card">
+<h3>Humidity Tracking</h3>
+<p>Ensure optimal plant conditions.</p>
+</div>
+
+<div class="card">
+<h3>Smart Alerts</h3>
+<p>Receive notifications when watering is needed.</p>
+</div>
+
+</div>
+
+</section>
+
+<section class="container" id="dashboard">
+
+<h2 class="title">Live Plant Monitoring</h2>
+
+<div class="dashboard">
+
+<div>
+
+<div class="gauge">
+
+<div class="fill" id="mfill"></div>
+<div class="value" id="mval">--%</div>
+
+</div>
+
+<p style="text-align:center;margin-top:10px">Soil Moisture</p>
+
+</div>
+
+<div>
+
+<div class="gauge">
+
+<div class="fill" id="tfill"></div>
+<div class="value" id="tval">--°C</div>
+
+</div>
+
+<p style="text-align:center;margin-top:10px">Temperature</p>
+
+</div>
+
+<div>
+
+<div class="gauge">
+
+<div class="fill" id="hfill"></div>
+<div class="value" id="hval">--%</div>
+
+</div>
+
+<p style="text-align:center;margin-top:10px">Humidity</p>
+
+</div>
+
+</div>
+
+</section>
+
+<section class="container">
+
+<h2 class="title">Sensor Data Chart</h2>
+
+<div class="chart">
+
+<canvas id="chart"></canvas>
+
+</div>
+
+</section>
+
+<section class="container" id="system">
+
+<h2 class="title">System Architecture</h2>
+
+<div class="architecture">
+
+<div>
+<h3>Sensors</h3>
+<p>Soil moisture and DHT sensors collect plant data.</p>
+</div>
+
+<div>
+<h3>ESP32</h3>
+<p>Processes data and sends it through WiFi.</p>
+</div>
+
+<div>
+<h3>Blynk Cloud</h3>
+<p>Displays plant monitoring information.</p>
+</div>
+
+<div>
+<h3>User Interface</h3>
+<p>Mobile dashboard allows real-time monitoring.</p>
+</div>
+
+</div>
+
+</section>
+
+<section class="container" id="prototype">
+
+<h2 class="title">Prototype Gallery</h2>
+
+<div class="gallery">
+
+<img src="plants.jpg">
+<img src="plants.jpg">
+<img src="plants.jpg">
+
+</div>
+
+</section>
+
+<div class="notification" id="alert">
+Plant soil is dry. Please water the plant.
+</div>
+
+<footer>
+
+<p>HydraPlant Smart Monitoring System</p>
+<p>IoT Plant Health Monitoring Project</p>
+
+</footer>
+
+<script>
+
+function toggleMode(){
+document.body.classList.toggle("dark")
+}
+
+function scrollToDashboard(){
+document.getElementById("dashboard").scrollIntoView({behavior:"smooth"})
+}
+
+let moisture=60
+let temp=26
+let hum=65
+
+const ctx=document.getElementById("chart")
+
+const chart=new Chart(ctx,{
+type:"line",
+data:{
+labels:[],
+datasets:[{
+label:"Soil Moisture %",
+data:[],
+borderColor:"green",
+fill:false
+}]
+}
+})
+
+function update(){
+
+moisture+=Math.floor(Math.random()*6-3)
+temp+=Math.floor(Math.random()*3-1)
+hum+=Math.floor(Math.random()*4-2)
+
+moisture=Math.max(0,Math.min(100,moisture))
+
+document.getElementById("mval").textContent=moisture+"%"
+document.getElementById("tval").textContent=temp+"°C"
+document.getElementById("hval").textContent=hum+"%"
+
+document.getElementById("mfill").style.height=moisture+"%"
+document.getElementById("tfill").style.height=(temp/40*100)+"%"
+document.getElementById("hfill").style.height=hum+"%"
+
+chart.data.labels.push("")
+chart.data.datasets[0].data.push(moisture)
+
+if(chart.data.labels.length>12){
+chart.data.labels.shift()
+chart.data.datasets[0].data.shift()
+}
+
+chart.update()
+
+if(moisture<40){
+document.getElementById("alert").style.display="block"
+setTimeout(()=>{document.getElementById("alert").style.display="none"},4000)
+}
+
+}
+
+setInterval(update,3000)
+
+</script>
+
+</body>
+</html>
